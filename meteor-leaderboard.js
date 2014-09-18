@@ -8,7 +8,11 @@ if(Meteor.isClient) {
   console.log('howdy on the client');
 
   Template.leaderboard.player = function() {
-    return PlayersList.find({}, {sort: {score: -1, name: 1}});
+    var currentUserId = Meteor.userId();
+    return PlayersList.find(
+      {createdBy: currentUserId}, 
+      {sort: {score: -1, name: 1}}
+    );
   }
 
   Template.leaderboard.sessionValue = function() {
@@ -35,9 +39,11 @@ if(Meteor.isClient) {
     'submit form': function(e, addFormTemplate){
       e.preventDefault();
       var playerName = addFormTemplate.find('#playerName').value;
+      var currentUserId = Meteor.userId();
       PlayersList.insert({
         name: playerName,
-        score: 0
+        score: 0,
+        createdBy: currentUserId
       });
     }
   });
