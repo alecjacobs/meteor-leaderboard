@@ -1,7 +1,5 @@
 accounts-base@1.1.0
-accounts-oauth@1.1.0
 accounts-password@1.0.1
-accounts-twitter@1.0.0
 accounts-ui-unstyled@1.1.1
 accounts-ui@1.1.0
 application-configuration@1.0.2
@@ -39,8 +37,6 @@ minimongo@1.0.3
 mobile-status-bar@1.0.0
 mongo@1.0.5
 npm-bcrypt@0.7.7
-oauth1@1.1.0
-oauth@1.1.0
 observe-sequence@1.0.2
 ordered-dict@1.0.0
 random@1.0.0
@@ -57,7 +53,6 @@ spacebars@1.0.1
 srp@1.0.0
 templating@1.0.6
 tracker@1.0.2
-twitter@1.1.0
 ui@1.0.2
 underscore@1.0.0
 url@1.0.0
