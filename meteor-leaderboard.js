@@ -1,25 +1,46 @@
 PlayersList = new Meteor.Collection('players');
 
 if(Meteor.isServer) {
-  console.log('howdy on the server');  
+  console.log('howdy on the server');
+
+  Meteor.publish('thePlayers', function(){
+    var currentUserId = this.userId;
+    return PlayersList.find({ createdBy: currentUserId });
+  });
+
+  Meteor.methods({
+    'insertPlayerData': function(playerName){
+      var currentUserId = Meteor.userId();
+      PlayersList.insert({
+        name: playerName,
+        score: 0,
+        createdBy: currentUserId
+      });
+    },
+    'removePlayer': function(selectedPlayer){
+      PlayersList.remove(selectedPlayer);
+    }
+  });
 }
 
 if(Meteor.isClient) {
   console.log('howdy on the client');
 
-  Template.leaderboard.player = function() {
+  Meteor.subscribe('thePlayers');
+
+  Template.leaderboard.player = function(){
     var currentUserId = Meteor.userId();
     return PlayersList.find(
-      {createdBy: currentUserId}, 
+      {createdBy: currentUserId},
       {sort: {score: -1, name: 1}}
     );
   }
 
-  Template.leaderboard.sessionValue = function() {
+  Template.leaderboard.sessionValue = function(){
     return Session.get('selectedPlayer');
   }
 
-  Template.leaderboard.selectedClass = function() {
+  Template.leaderboard.selectedClass = function(){
     var selectedPlayer = Session.get('selectedPlayer');
     var playerId = this._id;
 
@@ -28,7 +49,7 @@ if(Meteor.isClient) {
     }
   }
 
-  Template.leaderboard.showSelectedPlayer = function() {
+  Template.leaderboard.showSelectedPlayer = function(){
     var selectedPlayer = Session.get('selectedPlayer');
     return PlayersList.findOne(selectedPlayer);
   }
@@ -39,37 +60,32 @@ if(Meteor.isClient) {
     'submit form': function(e, addFormTemplate){
       e.preventDefault();
       var playerName = addFormTemplate.find('#playerName').value;
-      var currentUserId = Meteor.userId();
-      PlayersList.insert({
-        name: playerName,
-        score: 0,
-        createdBy: currentUserId
-      });
+      Meteor.call('insertPlayerData', playerName);
     }
   });
 
   Template.leaderboard.events({
-    'click li.player': function() {
+    'click li.player': function(){
       var playerId = this._id;
       Session.set('selectedPlayer', playerId);
     },
-    'click #increment': function() {
+    'click #increment': function(){
       var selectedPlayer = Session.get('selectedPlayer');
       PlayersList.update(
         {_id: selectedPlayer},
         {$inc: {score: 5}}
       );
     },
-    'click #decrement': function() {
+    'click #decrement': function(){
       var selectedPlayer = Session.get('selectedPlayer');
       PlayersList.update(
         {_id: selectedPlayer},
         {$inc: {score: -5}}
       )
     },
-    'click #remove': function() {
+    'click #remove': function(){
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.remove(selectedPlayer);
+      Meteor.call('removePlayer', selectedPlayer);
     }
   });
 }
