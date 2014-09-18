@@ -1,5 +1,3 @@
-PlayersList = new Meteor.Collection('players');
-
 if(Meteor.isServer) {
   console.log('howdy on the server');
 
